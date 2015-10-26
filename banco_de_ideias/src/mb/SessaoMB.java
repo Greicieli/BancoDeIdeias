@@ -30,12 +30,12 @@ public class SessaoMB {
 	}
 
 	public String entrar() {
-		rn = new UserRn();
+		UserRn rn = new UserRn();
 		User usuario = rn.buscarPorEmail(usuarioForm.getEmail());
 		
 		if ( usuario != null && usuarioForm.getEmail().equalsIgnoreCase(usuario.getEmail())
 				&& usuarioForm.getSenha().equals(usuario.getSenha())) {
-			usuarioLogado = usuario;
+			usuarioLogado = usuarioForm;
 			System.out.println("Entrou");
 			return "/index";
 			

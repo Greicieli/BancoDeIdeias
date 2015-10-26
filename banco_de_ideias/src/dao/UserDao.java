@@ -9,9 +9,10 @@ import java.util.List;
 import Dominio.User;
 
 public class UserDao extends Dao {
-
-	private final String INSERT = "INSERT INTO user (nome, email) values (?,?)";
-	private final String UPDATE = "UPDATE user SET nome = ?,  email = ? WHERE id = ?";
+	
+	private static final String SELECT_EMAIL = "SELECT * FROM user WHERE email = ?";
+	private final String INSERT = "INSERT INTO user (nome, email, senha) values (?,?,?)";
+	private final String UPDATE = "UPDATE user SET nome = ?,  email = ?, senha = ? WHERE id = ?";
 	private final String DELETE = "DELETE FROM user WHERE id = ?";
 	private final String SELECT = "SELECT * FROM user";
 	private final String SELECT_ID = "SELECT * FROM user WHERE id = ?";
@@ -29,6 +30,7 @@ public class UserDao extends Dao {
 			PreparedStatement ps = getConnection().prepareStatement(INSERT);
 			ps.setString(1, user.getNome());
 			ps.setString(2, user.getEmail());
+			ps.setString(3, user.getSenha());
 
 			ps.executeUpdate();
 
@@ -43,7 +45,8 @@ public class UserDao extends Dao {
 			PreparedStatement ps = getConnection().prepareStatement(UPDATE);
 			ps.setString(1, user.getNome());
 			ps.setString(2, user.getEmail());
-			ps.setLong(3, user.getId());
+			ps.setString(3, user.getSenha());
+			ps.setLong(4, user.getId());
 
 			ps.executeUpdate();
 
@@ -72,10 +75,7 @@ public class UserDao extends Dao {
 			PreparedStatement ps = getConnection().prepareStatement(SELECT);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
-				User user = new User();
-				user.setNome(rs.getString("nome"));
-				user.setEmail(rs.getString("email"));
-				user.setId(rs.getLong("id"));
+				User user = parseUser(rs);
 				users.add(user);
 			}
 		} catch (SQLException e) {
@@ -85,16 +85,22 @@ public class UserDao extends Dao {
 		return users;
 	}
 
+	private User parseUser(ResultSet rs) throws SQLException {
+		User user = new User();
+		user.setNome(rs.getString("nome"));
+		user.setEmail(rs.getString("email"));
+		user.setId(rs.getLong("id"));
+		user.setSenha(rs.getString("senha"));
+		return user;
+	}
+
 	public User buscarPorId(Long id) {
 		try {
 			PreparedStatement ps = getConnection().prepareStatement(SELECT_ID);
 			ps.setLong(1, id);
 			ResultSet rs = ps.executeQuery();
-			while (rs.next()) {
-				User user = new User();
-				user.setNome(rs.getString("nome"));
-				user.setEmail(rs.getString("email"));
-				user.setId(rs.getLong("id"));
+			if (rs.next()) {
+				User user = parseUser(rs);
 				return user;
 			}
 		} catch (SQLException e) {
@@ -104,5 +110,19 @@ public class UserDao extends Dao {
 		return null;
 	}
 
-}
+	public User buscarPorEmail(String email) {
+		try {
+			PreparedStatement preparedStatement = getConnection().prepareStatement(SELECT_EMAIL);
+			preparedStatement.setString(1, email);
+			
+			ResultSet resultSet = preparedStatement.executeQuery();
+			if(resultSet.next()){
+				return parseUser(resultSet);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
+}

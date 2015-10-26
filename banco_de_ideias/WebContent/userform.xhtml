@@ -1,14 +1,11 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
-          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core">
-<head>
-<title>Usuáios</title>
-</head>
 
-<h:body>
+<ui:composition template="/WEB-INF/templates/template.xhtml">
+<ui:define name="conteudo">
+
 
 	<div id="content">
 		<h1>
@@ -30,11 +27,19 @@
 				<h:outputLabel value="E-Mail: " />
 				<h:inputText value="#{userMB.user.email}" />
 			</div>
+			<div>
+				<h:outputLabel value="Senha:  " />
+				<h:inputText value="#{userMB.user.senha}" />
+			</div>
 			<button type="reset">Restaurar</button>
 			<h:commandButton value="Salvar" action="#{userMB.salvar()}" />
 		</h:form>
+		
+		
+		
 	</div>
+	</ui:define>
+	</ui:composition>
 
-</h:body>
 
 </html>

@@ -34,7 +34,7 @@ public class UserRn {
 	}
 
 	public void excluir(Long id) throws Exception {
-		dao.excluir(id);
+		 dao.excluir(id);
 	}
 	public User buscarPorEmail(String email) {
 		return dao.buscarPorEmail(email);
